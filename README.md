@@ -1,5 +1,5 @@
 # AdventOfAllTheCode
-My bad idea of going through [Advent Of Code](https://adventofcode.com) and doing years 2015-2020 in different languages.
+My bad idea of going through [Advent Of Code](https://adventofcode.com) and doing years 2015-2020 in different languages + any other aoc code I write.
 
 - [ ] 2015: Ruby
 - [ ] 2016: Lisp
@@ -7,3 +7,4 @@ My bad idea of going through [Advent Of Code](https://adventofcode.com) and doin
 - [ ] 2018: Fortran
 - [ ] 2019: Scala
 - [ ] 2020: Chicken
+- [ ] 2021: Python
