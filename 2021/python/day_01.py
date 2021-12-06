@@ -9,5 +9,11 @@ def solve(input_str):
     return (part1, part2)
 
 
+def main():
+    answer = solve(get_input(__file__))
+    print(answer)
+    assert answer == (1715, 1739)
+
 if __name__ == '__main__':
-    print(solve(get_input(__file__)))
+    main()
+

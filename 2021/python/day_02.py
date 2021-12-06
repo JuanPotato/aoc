@@ -17,5 +17,11 @@ def solve(input_str):
     return (x * y1, x * y2)
 
 
+def main():
+    answer = solve(get_input(__file__))
+    print(answer)
+    assert answer == (1868935, 1965970888)
+
 if __name__ == '__main__':
-    print(solve(get_input(__file__)))
+    main()
+
