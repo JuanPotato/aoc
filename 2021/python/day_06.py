@@ -1,16 +1,16 @@
 from aoc import *
 
 def solve(input_str):
-    fish = Counter()
-    fish.update(eval(input_str))
-    counts = [sum(fish.values())]
+    fish = [0] * 9
+    for n in eval(input_str):
+        fish[n] += 1
+
+    counts = [sum(fish)]
 
     for i in range(256):
-        new_fish = {k - 1: v for k,v in fish.items()}
-        new_fish[6] = new_fish.get(6, 0) + new_fish.pop(-1, 0)
-        new_fish[8] = fish.get(0, 0)
-        fish = new_fish
-        counts.append(sum(fish.values()))
+        # 1-6, 7 + 0, 8, 0
+        fish = fish[1:7] + [fish[7] + fish[0], fish[8], fish[0]]
+        counts.append(sum(fish))
 
     return (counts[80], counts[256])
 
