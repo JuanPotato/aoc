@@ -58,6 +58,11 @@ def get_input(script):
     with path.open() as f:
         return f.read()
 
+def sumrange(start, stop=None):
+    if stop == None:
+        start, stop = 0, start
+    return (stop - start + 1) * (start + stop) // 2
+
 
 # taken from https://github.com/mcpower/adventofcode/blob/master/utils.py
 def chunk(l,n):
@@ -84,6 +89,13 @@ def make_grid(*dimensions: typing.List[int], fill=None):
 
 def min_max(l):
     return min(l), max(l)
+
+def partial_sum(l):
+    "out[i] == sum(in[:i])"
+    out = [0]
+    for i in l:
+        out.append(out[-1] + i)
+    return out
 
 def list_diff(x):
     return [b-a for a, b in zip(x, x[1:])]
