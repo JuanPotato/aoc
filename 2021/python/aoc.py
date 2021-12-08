@@ -63,6 +63,14 @@ def sumrange(start, stop=None):
         start, stop = 0, start
     return (stop - start + 1) * (start + stop) // 2
 
+def norm(s):
+    return ''.join(sorted(list(s)))
+
+def pop_by(l, cond):
+    for i in range(len(l)):
+        if cond(l[i]):
+            return l.pop(i)
+
 
 # taken from https://github.com/mcpower/adventofcode/blob/master/utils.py
 def chunk(l,n):

@@ -7,34 +7,22 @@ def solve(input_str):
 
     part2 = 0
     for i,o in l:
-        nums = set(norm(w) for w in i + o)
-        numlen = defaultdict(list)
-        for n in nums:
-            numlen[len(n)].append(set(n))
+        nums = defaultdict(list)
+        for n in i:
+            nums[len(n)].append(set(n))
 
-        cf = numlen[2].pop() # 1
+        cf = nums[2].pop() # 1
+        bcdf = nums[4].pop() # 4
+        acf = nums[3].pop() # 7
+        abcdefg = nums[7].pop() # 8
 
-        bcdf = numlen[4].pop() # 4
+        acdfg = pop_by(nums[5], lambda n: len(n - cf) == 3) # 3
+        abdfg = pop_by(nums[5], lambda n: len(n - bcdf) == 2) # 5
+        acdeg = nums[5].pop(0) # 2
 
-        acf = numlen[3].pop() # 7
-
-        abcdefg = numlen[7].pop() # 8
-
-        numlen[5].sort(key=lambda n: len(n - cf))
-        acdfg = numlen[5].pop(0) # 3
-
-        numlen[5].sort(key=lambda n: len(n - bcdf))
-        abdfg = numlen[5].pop(0) # 5
-
-        acdeg = numlen[5].pop(0) # 2
-
-        numlen[6].sort(key=lambda n: len(n - acdfg))
-        abcdfg = numlen[6].pop(0) # 9
-
-        numlen[6].sort(key=lambda n: len(n - acf))
-        abcefg = numlen[6].pop(0) # 0
-
-        abdefg = numlen[6].pop() # 6
+        abcdfg = pop_by(nums[6], lambda n: len(n - acdfg) == 1) # 9
+        abcefg = pop_by(nums[6], lambda n: len(n - acf) == 3) # 0
+        abdefg = nums[6].pop() # 6
 
         nums = lmap(norm, (abcefg, cf, acdeg, acdfg, bcdf, abdfg, abdefg, acf, abcdefg, abcdfg))
         nums = {w:str(i) for i,w in enumerate(nums)}
@@ -43,9 +31,6 @@ def solve(input_str):
         part2 += out_val
 
     return (part1, part2)
-
-def norm(s):
-    return ''.join(sorted(list(s)))
 
 
 def main():
