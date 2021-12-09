@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from collections import Counter, defaultdict
 from functools import reduce
 from pathlib import Path
@@ -125,5 +127,6 @@ def words(s: str) -> typing.List[str]:
 
 
 if __name__ == '__main__':
-    main()
+    if len(sys.argv) == 1:
+        main()
 
