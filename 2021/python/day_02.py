@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 from aoc import *
 
 def solve(input_str):
