@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from collections import Counter, defaultdict
+from collections import *
 from functools import reduce
 from pathlib import Path
 import importlib
@@ -35,7 +35,7 @@ def parse_list(s, *types, line='\n', sep=' '):
         types = (str,)
 
     for line in s.strip().split('\n'):
-        t = tuple(type(word) for type,word in zip(types, line.split(' ', len(types) - 1)))
+        t = tuple(type(word) for type,word in zip(types, line.split(sep, len(types) - 1)))
         if len(t) == 1:
             t = t[0]
         yield t
@@ -72,6 +72,12 @@ def pop_by(l, cond):
     for i in range(len(l)):
         if cond(l[i]):
             return l.pop(i)
+
+def default_counter(it):
+    d = defaultdict(int)
+    for e in it:
+        d[e] += 1
+    return d
 
 
 # taken from https://github.com/mcpower/adventofcode/blob/master/utils.py
