@@ -18,7 +18,7 @@ def solve_maze(risk, goal):
     dist[0][0] = 0
 
     visited = set()
-    unvisited = [(dist[r][c], (r,c)) for r in range(R) for c in range(C)]
+    unvisited = [(0, (0,0))]
     heapq.heapify(unvisited)
 
     node = 0,0
