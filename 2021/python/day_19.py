@@ -13,31 +13,15 @@ def parse(inp):
     sc = [lmap(eval, l.split('\n')[1:]) for l in sc]
     return sc
 
-def merge(ss):
-    big = set(ss.pop(0))
+def merge(reports):
+    big = set(reports.pop(0))
     scanners = [(0,0)]
-    while ss:
-        best_i = 0
-        best, score = None, 0.0
-        for i,guess in enumerate(ss):
-            newscore, newpoints, scanner = match(big, guess)
+    while reports:
+        i, (score, points, scanner) = next((i, res) for i,guess in enumerate(reports) if (res := match(big, guess))[0] >= 12)
 
-            if newscore > score:
-                best_i = i
-                score = newscore
-                best = newpoints
-                best_scanner = scanner
-
-            if score >= 12:
-                # good enough
-                break
-
-        if score < 12:
-            raise Exception("Unimplemented")
-
-        ss.pop(best_i)
-        scanners.append(best_scanner)
-        big = big.union(set(best))
+        reports.pop(i)
+        scanners.append(scanner)
+        big = big.union(set(points))
 
     return scanners, big
 
@@ -57,7 +41,6 @@ def match(pointsa, pointsb):
     score = 0
     best = pointsb
     best_o = (0,0,0)
-
 
     for t in transforms:
         moved = [t(*p) for p in pointsb]
