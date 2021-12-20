@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from aoc import *
+import time
 
 def solve(input_str):
     report = parse(input_str.strip())
@@ -17,14 +18,19 @@ def merge(reports):
     big = set(reports.pop(0))
     scanners = [(0,0)]
     while reports:
-        i, (score, points, scanner) = next((i, res) for i,guess in enumerate(reports) if (res := match(big, guess))[0] >= 12)
+        to_merge = []
 
-        reports.pop(i)
-        scanners.append(scanner)
-        big = big.union(set(points))
+        for i, guess in enumerate(reports):
+            score, points, scanner = match(big, guess)
+            if score >= 12:
+                to_merge.append((i, points, scanner))
+
+        for i, points, scanner in to_merge[::-1]:
+            reports.pop(i)
+            scanners.append(scanner)
+            big.update(set(points))
 
     return scanners, big
-
 
 transforms = [
     lambda x,y,z: ( z,  y, -x), lambda x,y,z: (-y,  z, -x), lambda x,y,z: (-z, -y, -x),
@@ -37,20 +43,36 @@ transforms = [
     lambda x,y,z: (-y,  x,  z), lambda x,y,z: (-x, -y,  z), lambda x,y,z: ( y, -x,  z),
 ]
 
-def match(pointsa, pointsb):
+
+def dist(a,b):
+    return (a[0] - b[0], a[1] - b[1], a[2] - b[2])
+
+def match(reference, points):
     score = 0
-    best = pointsb
+    best = points
     best_o = (0,0,0)
 
     for t in transforms:
-        moved = [t(*p) for p in pointsb]
-        c = Counter(tuple(aa-bb for aa,bb in zip(a,b)) for a in pointsa for b in moved)
-        offset, s = c.most_common()[0]
+        moved = [t(*p) for p in points]
+
+        m = (0, None)
+        dists = {}
+        for a in reference:
+            for b in moved:
+                d = dist(a, b)
+                dists[d] = (dd := (dists.get(d, 0) + 1))
+                if dd > m[0]:
+                    m = (dd, d)
+
+        s, offset = m
 
         if s > score:
             score = s
             best = moved
             best_o = offset
+
+        if s >= 12:
+            break
 
     xo,yo,zo = best_o
     return score, [(x+xo,y+yo,z+zo) for x,y,z in best], best_o
