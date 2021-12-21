@@ -3,34 +3,19 @@
 from aoc import *
 from typing import NamedTuple
 
-die_state = 0
-
 def solve(input_str):
     _, p1, _, p2 = ints(input_str)
     return (game(p1, p2), dirac(p1, p2))
 
-def die():
-    global die_state
-    ret = die_state + 1
-    die_state = (die_state + 1) % 100
-    return ret
-
 def game(p1, p2):
-    global die_state
-    die_state = 0
-
-    score1 = 0
-    score2 = 0
+    g = Game(p1, p2, 0, 0, True)
     die_roll = 0
 
-    while score1 < 1000 and score2 < 1000:
-        p1 = ((p1 - 1) + sum((die(), die(), die()))) % 10 + 1
+    while g.score1 < 1000 and g.score2 < 1000:
+        g = g.play((die_roll % 100) * 3 + 6)
         die_roll += 3
-        score1 += p1
-        score1, score2 = score2, score1
-        p1, p2 = p2, p1
 
-    return min(score1, score2) * die_roll
+    return min(g.score1, g.score2) * die_roll
 
 class Game(NamedTuple):
     p1: int
@@ -49,11 +34,10 @@ class Game(NamedTuple):
             p2 = ((p2 - 1) + three_die_sum) % 10 + 1
             score2 += p2
 
-        p1_turn = not p1_turn
-        return Game(p1, p2, score1, score2, p1_turn)
+        return Game(p1, p2, score1, score2, not p1_turn)
 
 def dirac(p1, p2):
-    games = {Game(p1, p2, 0,0, True): 1}
+    games = {Game(p1, p2, 0, 0, True): 1}
     p1_wins = 0
     p2_wins = 0
 
