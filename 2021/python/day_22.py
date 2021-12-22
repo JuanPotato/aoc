@@ -5,55 +5,47 @@ from typing import NamedTuple
 import time
 
 def solve(input_str):
-    t1 = time.time()
-
-
-    cubes = []
-    cubes2 = []
+    all_cubes = []
+    init_cubes = []
 
     for l in input_str.strip().split('\n'):
         on = l[1] == 'n'
         xmin, xmax, ymin, ymax, zmin, zmax = ints(l)
-        c = Cube(Range(xmin, xmax), Range(ymin, ymax), Range(zmin, zmax))
+        cube = Cube(Range(xmin, xmax), Range(ymin, ymax), Range(zmin, zmax))
 
-        new_cubes = []
-        for other in cubes:
-            if other.intersects(c):
-                new_cubes.extend(other - c)
+        new_all_cubes = []
+        for other in all_cubes:
+            if other.intersects(cube):
+                new_all_cubes.extend(other - cube)
             else:
-                new_cubes.append(other)
+                new_all_cubes.append(other)
 
         if on:
-            new_cubes.append(c)
+            new_all_cubes.append(cube)
 
-        cubes = new_cubes
+        all_cubes = new_all_cubes
 
-
+        
         xmin, ymin, zmin = [max(-50, e) for e in (xmin, ymin, zmin)]
         xmax, ymax, zmax = [min(e, 50) for e in (xmax, ymax, zmax)]
-        c2 = Cube(Range(xmin, xmax), Range(ymin, ymax), Range(zmin, zmax))
-        if c2.unwrap() == None:
+        init_cube = Cube(Range(xmin, xmax), Range(ymin, ymax), Range(zmin, zmax))
+        if init_cube.unwrap() == None:
             continue
 
-        new_cubes2 = []
-        for other in cubes2:
-            if other.intersects(c2):
-                new_cubes2.extend(other - c2)
+        new_init_cubes = []
+        for other in init_cubes:
+            if other.intersects(init_cube):
+                new_init_cubes.extend(other - init_cube)
             else:
-                new_cubes2.append(other)
+                new_init_cubes.append(other)
 
         if on:
-            new_cubes2.append(c2)
+            new_init_cubes.append(init_cube)
 
+        init_cubes = new_init_cubes
 
-        cubes2 = new_cubes2
-
-    part2 = sum(c.volume() for c in cubes)
-    part1 = sum(c.volume() for c in cubes2)
-
-    t2 = time.time()
-
-    print(t2 - t1)
+    part1 = sum(map(Cube.volume, init_cubes))
+    part2 = sum(map(Cube.volume, all_cubes))
 
     return (part1, part2)
 
