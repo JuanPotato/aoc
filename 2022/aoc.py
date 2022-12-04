@@ -79,6 +79,9 @@ def default_counter(it):
         d[e] += 1
     return d
 
+def lines(input_str, sep='\n'):
+    return input_str.strip().split(sep)
+
 
 # taken from https://github.com/mcpower/adventofcode/blob/master/utils.py
 def chunk(l,n):
