@@ -82,6 +82,8 @@ def default_counter(it):
 def lines(input_str, sep='\n'):
     return input_str.strip().split(sep)
 
+def ddict():
+    return defaultdict(ddict)
 
 # taken from https://github.com/mcpower/adventofcode/blob/master/utils.py
 def chunk(l,n):
