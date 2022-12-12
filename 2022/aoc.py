@@ -10,6 +10,8 @@ import time
 import sys
 import re
 
+Point = namedtuple('Point', ('x', 'y'))
+
 def main():
     for day in range(1, 26):
         try:
