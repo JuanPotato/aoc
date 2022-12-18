@@ -2,6 +2,8 @@
 
 from aoc import *
 import math
+import itertools
+import heapq
 
 def solve(input_str):
     tnl = {}
@@ -66,15 +68,18 @@ def solve(input_str):
     # function also takes in a list of valves that are already open.
     # It's a surprise tool that will help us later 
     def best_score(total_time, start_valve, not_allowed=tuple()):
-        # time, presure, loc, open
-        q = [(total_time, 0, start_valve, not_allowed)]
+        # presure, time, loc, open
+        q = []
+        heapq.heappush(q, (0, total_time, start_valve, not_allowed))
         best = 0
         done_valves = None
 
         while q:
             # Sort pressures highest to lowest
-            q.sort(key=lambda x:-x[1])
-            tim, pres, loc, open = q.pop(0)
+            pres, tim, loc, open = heapq.heappop(q)
+            # Heapq only is min heap, invert pressure
+            pres = -pres
+
             my_options = options(tim, loc, open)
 
             # bbs #3
@@ -90,7 +95,8 @@ def solve(input_str):
                 if new_time < 0:
                     continue
                 new_open = open + (opt,)
-                q.append((new_time, pres + new_pres, opt, new_open))
+                # Heapq only is min heap, invert pressure
+                heapq.heappush(q, (-(pres + new_pres), new_time, opt, new_open))
 
             if pres > best:
                 done_valves = open
@@ -100,11 +106,24 @@ def solve(input_str):
         return best, done_valves
 
     part1 = best_score(30, 'AA')[0]
-    # Get the best score with 26 minutes
-    human = best_score(26, 'AA')
-    # Get the best score with 26 minutes again, but don't do the valves we did
-    elephant = best_score(26, 'AA', human[1])
-    return (part1, human[0] + elephant[0])
+
+    good_valves = list(options(26, 'AA', []).keys())
+
+    mscore = 0
+    for n in range(len(good_valves) // 2):
+        got_better_score = False
+        for excluded_valves in itertools.combinations(good_valves, n):
+            human = best_score(26, 'AA', excluded_valves)
+            elephant = best_score(26, 'AA', human[1][n:])
+            score = human[0] + elephant[0]
+            if score > mscore:
+                got_better_score = True
+                mscore = score
+
+        if not got_better_score:
+            break
+
+    return (part1, mscore)
 
 
 def main():
