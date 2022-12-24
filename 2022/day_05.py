@@ -24,8 +24,6 @@ def solve(input_str):
         cols2[to-1] += cols2[fr-1][-n:]
         cols2[fr-1][-n:] = []
 
-
-
     part1 = ''.join(c[-1] for c in cols1)
     part2 = ''.join(c[-1] for c in cols2)
     return (part1, part2)
