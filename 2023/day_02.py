@@ -2,6 +2,8 @@
 
 from aoc import *
 
+bag = {'red':12, 'green':13, 'blue':14}
+
 def solve(input_str):
     return (part1(input_str), part2(input_str))
 
