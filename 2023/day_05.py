@@ -4,28 +4,14 @@ from aoc import *
 
 
 def solve(input_str):
-    return part1(input_str), part2(input_str)
-
-
-def part1(inp):
-    inp = inp.split("\n\n")
-    seeds = ints(inp[0])
+    inp = input_str.split("\n\n")
+    seeds1 = [(s, s + 1) for s in ints(inp[0])]
+    seeds2 = [(s, s + n) for s, n in chunk(ints(inp[0]), 2)]
     maps = [chunk(ints(p), 3) for p in inp[1:]]
-    locs = []
-    for s in seeds:
-        for m in maps:
-            for dst, src, n in m:
-                if src <= s <= (src + n):
-                    s = (s - src) + dst
-                    break
-        locs.append(s)
-    return min(locs)
+    return magic(seeds1, maps), magic(seeds2, maps)
 
 
-def part2(inp):
-    inp = inp.split("\n\n")
-    seeds = [(s, s + n) for s, n in chunk(ints(inp[0]), 2)]
-    maps = [chunk(ints(p), 3) for p in inp[1:]]
+def magic(seeds, maps):
     stage = []
     for m in maps:
         for s in seeds:
