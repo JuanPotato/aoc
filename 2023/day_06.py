@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 from aoc import *
+from math import *
 
 
 def solve(input_str):
