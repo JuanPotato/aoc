@@ -5,19 +5,19 @@ from aoc import *
 
 def solve(input_str: str):
     grid = list(parse_list(input_str, list))
-    part1, visited = travel([list(r) for r in grid])
+    part1, visited = travel([list(r) for r in grid], True)
 
     part2 = 0
-    for (c, r) in visited:
+    for c, r in visited:
         if grid[r][c] == ".":
             new_grid = [list(r) for r in grid]
             new_grid[r][c] = "#"
-            if travel(new_grid) == None:
+            if not travel(new_grid):
                 part2 += 1
     return part1, part2
 
 
-def travel(grid):
+def travel(grid, part1=False):
     x, y = next(
         (x, y) for y, row in enumerate(grid) for x, val in enumerate(row) if val == "^"
     )
@@ -47,6 +47,8 @@ def travel(grid):
                         return None
                     grid[y][x] |= nums[d]
 
+    if not part1:
+        return True
     visited = [
         (x, y)
         for y, row in enumerate(grid)
