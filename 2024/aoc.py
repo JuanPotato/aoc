@@ -33,6 +33,9 @@ def main():
 
 # Utility functions
 def parse_list(s, *types, line='\n', sep=' '):
+    return list(_parse_list(s, *types, line, sep))
+
+def _parse_list(s, *types, line='\n', sep=' '):
     if not types:
         types = (str,)
 
