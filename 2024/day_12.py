@@ -58,14 +58,6 @@ def flood(grid, x, y, region, val):
                 flood(grid, nx, ny, region, val)
 
 
-def trace(region):
-    outline = []
-    for x, y in region:
-        sides = ((x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1))
-        if any(side not in region for side in sides):
-            outline.append((x, y))
-
-
 def main():
     answer = solve(get_input(__file__))
     print(answer)
