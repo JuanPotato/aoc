@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from aoc import *
-import itertools
 
 
 def solve(input_str: str):
@@ -19,20 +18,27 @@ def solve(input_str: str):
     return part1, part2
 
 
-def do(values, part2=False):
-    test, *rest = values
-    for ops in itertools.product("+*|" if part2 else "+*", repeat=len(rest) - 1):
-        cur = rest[0]
-        for i, op in enumerate(ops):
-            if op == "+":
-                cur += rest[i + 1]
-            elif op == "*":
-                cur *= rest[i + 1]
-            elif op == "|":
-                cur = int(f"{cur}{rest[i+1]}")
+def do(row, part2=False):
+    target, n1, *nums = row
+    return do_inner(target, n1, nums, part2)
 
-        if cur == test:
-            return cur
+
+def do_inner(target, cur, nums, part2=False):
+    if cur > target:
+        return 0
+
+    if not nums:
+        if cur == target:
+            return target
+        return 0
+
+    n, *nums = nums
+    if res := do_inner(target, cur + n, nums, part2):
+        return res
+    if res := do_inner(target, cur * n, nums, part2):
+        return res
+    if part2 and (res := do_inner(target, int(f"{cur}{n}"), nums, part2)):
+        return res
     return 0
 
 
