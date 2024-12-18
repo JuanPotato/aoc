@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 
 from aoc import *
-import heapq
 
 
 DIRS = (
@@ -16,21 +15,32 @@ def solve(input_str: str):
     meteorbytes = chunk(ints(input_str), 2)
     INITIAL_STEPS = 1024
     H, W = 71, 71
-    grid = [[0 for _ in range(W)] for _ in range(H)]
-    for mx, my in meteorbytes[:INITIAL_STEPS]:
-        grid[my][mx] = 1
 
-    short = shortest(grid)
+    def make_grid(steps):
+        grid = [[0 for _ in range(W)] for _ in range(H)]
+        for mx, my in meteorbytes[:steps]:
+            grid[my][mx] = 1
+        return grid
+
+    short = shortest(make_grid(INITIAL_STEPS))
     part1 = len(short) - 1
 
-    for mx, my in meteorbytes[INITIAL_STEPS:]:
-        grid[my][mx] = 1
-        if (mx, my) not in short:
+    low = 1024
+    high = len(meteorbytes)
+    # not convinced this is perfectly correct
+    while low < high:
+        if meteorbytes[low - 1] not in short:
+            low += 1
             continue
-        short = shortest(grid)
-        if not short:
-            part2 = f"{mx},{my}"
-            break
+        mid = (low + high) // 2
+        if maybe := shortest(make_grid(mid)):
+            short = maybe
+            low = mid + 1
+        else:
+            high = mid
+
+    mx, my = meteorbytes[low - 1]
+    part2 = f"{mx},{my}"
 
     return (part1, part2)
 
@@ -39,19 +49,10 @@ def shortest(grid):
     H, W = 71, 71
     start = (0, 0)
     end = (W - 1, H - 1)
-    paths = [(1, start, {start})]
-    min_len = defaultdict(lambda: float("inf"))
+    been_to = {start}
+    points = [(start, {start})]
 
-    def should_quit(x, y, l):
-        if min_len[(x, y)] <= l:
-            return True
-        else:
-            min_len[(x, y)] = l
-            return False
-
-    def get_neighs(x, y, visited):
-        if (x, y) == end:
-            return []
+    def get_neighs(x, y):
         return [
             (x + dx, y + dy)
             for dx, dy in DIRS
@@ -59,36 +60,21 @@ def shortest(grid):
                 (0 <= y + dy < H)
                 and (0 <= x + dx < W)
                 and grid[y + dy][x + dx] == 0
-                and (x + dx, y + dy) not in visited
+                and (x + dx, y + dy) not in been_to
             )
         ]
 
-    while paths:
-        _, (x, y), visited = heapq.heappop(paths)
-
-        if (x, y) == end:
-            return visited
-
-        if should_quit(x, y, len(visited)):
-            continue
-
-        # silly optimization got me 25% faster
-        while neighs := get_neighs(x, y, visited):
-            for nx, ny in neighs[1:]:
-                new_visited = set(visited)
-                new_visited.add((nx, ny))
-                heapq.heappush(paths, (len(new_visited), (nx, ny), new_visited))
-
-            # basically instead of pushing and popping every time. advance the current x,y and only pop a new point when you can't move anymore
-            x, y = neighs[0]
-            visited.add(neighs[0])
-            # of course quit if we're too long
-            if should_quit(x, y, len(visited)):
-                break
-        else:
+    while points:
+        new_points = []
+        for (x, y), path in points:
             if (x, y) == end:
-                # if we hit the end, we need to make sure its the shortest by putting it on the heap
-                heapq.heappush(paths, (len(visited), (x, y), visited))
+                return path
+            for nx, ny in get_neighs(x, y):
+                new_path = set(path)
+                new_path.add((nx, ny))
+                new_points.append(((nx, ny), new_path))
+                been_to.add((nx, ny))
+        points = new_points
 
 
 def main():
