@@ -9,14 +9,6 @@ DIRS = (
     (-1, 0),  # <
 )
 
-SKIPS = (
-    # straight 2
-    (0, -2),
-    (2, 0),
-    (0, 2),
-    (-2, 0),
-)
-
 
 def solve(input_str: str):
     grid = parse_list(input_str, list)
@@ -25,19 +17,13 @@ def solve(input_str: str):
     end = find_me(grid, "E")
     start = find_me(grid, "S")
     grid[end[1]][end[0]] = "."
-    grid[start[1]][start[0]] = "."
+    grid[start[1]][start[0]] = 0
     path = [start]
+    i = 0
     x, y = start
     while (x, y) != end:
-        neighs = [
-            (x + dx, y + dy)
-            for dx, dy in DIRS
-            if (0 <= y + dy < H)
-            and (0 <= x + dx < W)
-            and grid[y + dy][x + dx] == "."
-            and (x + dx, y + dy) != path[len(path) - 2]
-        ]
-        x, y = neighs[0]
+        x, y = next((nx, ny) for nx, ny in neighbors(x, y, W, H) if grid[ny][nx] == ".")
+        grid[y][x] = (i := i + 1)
         path.append((x, y))
 
     part1 = cheat(path, 2)
@@ -47,7 +33,6 @@ def solve(input_str: str):
     part2 = sum(v for k, v in part2.items() if k >= 100)
 
     return (part1, part2)
-    # return (1497, 1030809)
 
 
 def cheat(path, ps):
