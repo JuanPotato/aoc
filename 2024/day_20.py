@@ -24,42 +24,46 @@ def solve(input_str: str):
     W = len(grid[0])
     end = find_me(grid, "E")
     start = find_me(grid, "S")
-    grid[start[1]][start[0]] = 0
     grid[end[1]][end[0]] = "."
+    grid[start[1]][start[0]] = "."
     path = [start]
     x, y = start
-    i = 0
     while (x, y) != end:
-        x, y = next((nx, ny) for nx, ny in neighbors(x, y, W, H) if grid[ny][nx] == ".")
-        grid[y][x] = (i := i + 1)
+        neighs = [
+            (x + dx, y + dy)
+            for dx, dy in DIRS
+            if (0 <= y + dy < H)
+            and (0 <= x + dx < W)
+            and grid[y + dy][x + dx] == "."
+            and (x + dx, y + dy) != path[len(path) - 2]
+        ]
+        x, y = neighs[0]
         path.append((x, y))
 
-    part1 = cheat(grid, path, 2)
+    part1 = cheat(path, 2)
     part1 = sum(v for k, v in part1.items() if k >= 100)
 
-    part2 = cheat(grid, path, 20)
+    part2 = cheat(path, 20)
     part2 = sum(v for k, v in part2.items() if k >= 100)
 
     return (part1, part2)
+    # return (1497, 1030809)
 
 
-def cheat(grid, path, ps):
-    H = len(grid)
-    W = len(grid[0])
+def cheat(path, ps):
+    set_path = {p: i for i, p in enumerate(path)}
     deltas = list(points_within(0, 0, ps))
+
     cheater = Counter()
 
     for pi, (px, py) in enumerate(path):
         for dx, dy in deltas:
-            hx = px + dx
-            hy = py + dy
-            if not (0 <= hx < W and 0 <= hy < H):
-                continue
-            if grid[hy][hx] == "#":
-                continue
-            saved = grid[hy][hx] - pi - abs(dx) - abs(dy)
-            if saved > 0:
-                cheater[saved] += 1
+            hop = (px + dx, py + dy)
+            if hop in set_path:
+                saved = set_path[hop] - pi - abs(dx) - abs(dy)
+                if saved > 0:
+                    cheater[saved] += 1
+        del set_path[(px, py)]
 
     return cheater
 
