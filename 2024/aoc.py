@@ -12,6 +12,8 @@ import re
 
 Point = namedtuple('Point', ('x', 'y'))
 
+Trie = lambda: defaultdict(Trie)
+
 def main():
     for day in range(1, 26):
         try:
